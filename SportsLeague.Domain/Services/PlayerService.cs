@@ -137,5 +137,4 @@ namespace SportsLeague.Domain.Services
             await _playerRepository.DeleteAsync(id);
         }
     }
-
 }
