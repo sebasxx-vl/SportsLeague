@@ -11,5 +11,7 @@
         // Navigation Property - Colección de jugadores
         public ICollection<Player> Players { get; set; } = new List<Player>();
 
+        // Navigation Property - Colección de torneos en los que participa un equipo
+        public ICollection<TournamentTeam> TournamentTeams { get; set; } = new List<TournamentTeam>();
     }
 }
