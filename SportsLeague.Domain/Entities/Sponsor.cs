@@ -10,8 +10,6 @@ public class Sponsor : AuditBase
 
     public string? Phone { get; set; }
 
-    public string? WebsiteUrl { get; set; }
-
     public SponsorCategory Category { get; set; }
 
     // Navigation Property (Relación N:M)
