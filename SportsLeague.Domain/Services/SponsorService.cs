@@ -139,7 +139,14 @@ public class SponsorService : ISponsorService
         // Crear
         tournamentSponsor.SponsorId = sponsorId;
         var created = await _tournamentSponsorRepository.CreateAsync(tournamentSponsor);
-        return created;
+
+        // Recargar con navigation properties y devolver
+        var reloaded = await _tournamentSponsorRepository.GetByTournamentAndSponsorAsync(
+            tournamentSponsor.TournamentId, sponsorId);
+        if (reloaded == null)
+            return created; // fallback
+
+        return reloaded;
     }
 
     public async Task<IEnumerable<Tournament>> GetTournamentsBySponsorAsync(int sponsorId)

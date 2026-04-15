@@ -149,8 +149,10 @@ namespace SportsLeague.DataAccess.Context
             {
                 entity.HasKey(s => s.Id);
                 entity.Property(s => s.Name)
+                      .IsRequired()
                       .HasMaxLength(150);
                 entity.Property(s => s.ContactEmail)
+                      .IsRequired()
                       .HasMaxLength(150);
                 entity.Property(s => s.Phone)
                       .HasMaxLength(50);
@@ -162,6 +164,7 @@ namespace SportsLeague.DataAccess.Context
                       .IsRequired();
                 entity.Property(s => s.UpdatedAt)
                       .IsRequired(false);
+                entity.HasIndex(s => s.Name).IsUnique();
             });
 
             // ── TournamentSponsor (join) Configuration ──
@@ -172,6 +175,11 @@ namespace SportsLeague.DataAccess.Context
                       .IsRequired();
                 entity.Property(ts => ts.UpdatedAt)
                       .IsRequired(false);
+                entity.Property(ts => ts.ContractAmount)
+                      .IsRequired()
+                      .HasColumnType("decimal(18,2)");
+                entity.Property(ts => ts.JoinedAt)
+                      .IsRequired();
 
                 entity.HasOne(ts => ts.Tournament)
                       .WithMany(t => t.TournamentSponsors)

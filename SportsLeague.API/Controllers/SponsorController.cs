@@ -39,53 +39,129 @@ public class SponsorController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] SponsorRequestDTO request)
     {
-        var sponsor = _mapper.Map<Sponsor>(request);
-        var created = await _sponsorService.CreateAsync(sponsor);
-        var dto = _mapper.Map<SponsorResponseDTO>(created);
-        return CreatedAtAction(nameof(GetById), new { id = dto.Id }, dto);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        try
+        {
+            var sponsor = _mapper.Map<Sponsor>(request);
+            var created = await _sponsorService.CreateAsync(sponsor);
+            var dto = _mapper.Map<SponsorResponseDTO>(created);
+            return CreatedAtAction(nameof(GetById), new { id = dto.Id }, dto);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] SponsorRequestDTO request)
     {
-        var sponsor = _mapper.Map<Sponsor>(request);
-        await _sponsorService.UpdateAsync(id, sponsor);
-        return NoContent();
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        try
+        {
+            var sponsor = _mapper.Map<Sponsor>(request);
+            await _sponsorService.UpdateAsync(id, sponsor);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        await _sponsorService.DeleteAsync(id);
-        return NoContent();
+        try
+        {
+            await _sponsorService.DeleteAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
     }
 
     // --- Tournament links ---
+
     [HttpGet("{id}/tournaments")]
     public async Task<IActionResult> GetTournaments(int id)
     {
-        var tournaments = await _sponsorService.GetTournamentsBySponsorAsync(id);
-        var dto = _mapper.Map<IEnumerable<TournamentResponseDTO>>(tournaments);
-        return Ok(dto);
+        try
+        {
+            var tournaments = await _sponsorService.GetTournamentsBySponsorAsync(id);
+            var dto = _mapper.Map<IEnumerable<TournamentResponseDTO>>(tournaments);
+            return Ok(dto);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
     }
 
     [HttpPost("{id}/tournaments")]
     public async Task<IActionResult> LinkToTournament(int id, [FromBody] TournamentSponsorRequestDTO request)
     {
-        var ts = new TournamentSponsor
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        try
         {
-            TournamentId = request.TournamentId,
-            ContractAmount = request.ContractAmount
-        };
-        var created = await _sponsorService.LinkToTournamentAsync(id, ts);
-        var dto = _mapper.Map<TournamentSponsorResponseDTO>(created);
-        return CreatedAtAction(nameof(GetTournaments), new { id = id }, dto);
+            var ts = new TournamentSponsor
+            {
+                TournamentId = request.TournamentId,
+                ContractAmount = request.ContractAmount
+            };
+
+            var created = await _sponsorService.LinkToTournamentAsync(id, ts);
+
+            // get tournament name from sponsor's tournaments list
+            var tournaments = await _sponsorService.GetTournamentsBySponsorAsync(id);
+            var tournament = tournaments.FirstOrDefault(t => t.Id == request.TournamentId);
+
+            // get sponsor name
+            var sponsor = await _sponsorService.GetByIdAsync(id);
+
+            var response = new TournamentSponsorResponseDTO
+            {
+                Id = created.Id,
+                TournamentId = created.TournamentId,
+                TournamentName = tournament?.Name ?? string.Empty,
+                SponsorId = created.SponsorId,
+                SponsorName = sponsor?.Name ?? string.Empty,
+                ContractAmount = created.ContractAmount,
+                JoinedAt = created.JoinedAt
+            };
+
+            return CreatedAtAction(nameof(GetTournaments), new { id = id }, response);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
     }
 
     [HttpDelete("{id}/tournaments/{tid}")]
     public async Task<IActionResult> UnlinkFromTournament(int id, int tid)
     {
-        await _sponsorService.UnlinkFromTournamentAsync(id, tid);
-        return NoContent();
+        try
+        {
+            await _sponsorService.UnlinkFromTournamentAsync(id, tid);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
     }
 }
