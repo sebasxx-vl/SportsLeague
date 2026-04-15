@@ -9,10 +9,7 @@ public class Sponsor : AuditBase
     public string ContactEmail { get; set; } = string.Empty;
 
     public string? Phone { get; set; }
-<<<<<<< HEAD
     public string? WebsiteUrl { get; set; }
-=======
->>>>>>> 6f552c14addb3caf1dd99f5b764773e4f64d2eef
 
     public SponsorCategory Category { get; set; }
 
