@@ -2,7 +2,7 @@
 
 namespace SportsLeague.API.DTOs.Response;
 
-public class TournamentRequestDTO
+public class TournamentResponseDTO
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
