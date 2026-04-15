@@ -172,6 +172,7 @@ public class TournamentService : ITournamentService
     public async Task<IEnumerable<Team>> GetTeamsByTournamentAsync(int tournamentId)
     {
         var tournament = await _tournamentRepository.GetByIdAsync(tournamentId);
+
         if (tournament == null)
             throw new KeyNotFoundException(
                 $"No se encontró el torneo con ID {tournamentId}");
@@ -179,6 +180,6 @@ public class TournamentService : ITournamentService
         var tournamentTeams = await _tournamentTeamRepository
             .GetByTournamentAsync(tournamentId);
 
-        return tournamentTeams.Select(tt => tt.Team);
+        return tournamentTeams;//  Este select es un filtro para obtener solo los equipos asociados al torneo
     }
 }
