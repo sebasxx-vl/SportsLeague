@@ -6,5 +6,4 @@ public interface IMatchRepository : IGenericRepository<Match>
     Task<IEnumerable<Match>> GetByTeamAsync(int teamId);
     Task<Match?> GetByIdWithDetailsAsync(int id);
     Task<IEnumerable<Match>> GetByTournamentWithDetailsAsync(int tournamentId);
-
 }
