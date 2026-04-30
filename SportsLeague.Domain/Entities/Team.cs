@@ -14,6 +14,11 @@
         // Navigation Property - Colección de torneos en los que participa un equipo
         public ICollection<TournamentTeam> TournamentTeams { get; set; } = new List<TournamentTeam>();
 
+        // Navigation Property - Colección de partidos en los que participa un equipo
+        // Partidos como local
+        public ICollection<Match> HomeMatches { get; set; } = new List<Match>();
+        // Partidos como visitante
+        public ICollection<Match> AwayMatches { get; set; } = new List<Match>();
 
     }
 }
