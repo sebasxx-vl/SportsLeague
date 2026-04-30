@@ -15,5 +15,10 @@ namespace SportsLeague.Domain.Entities
 
         // Navigation Property - Permite obtener y recuperar datos del jugador junto con su equipo
         public Team Team { get; set; } = null!;
+
+        // Navigation Properties para goles y tarjetas
+        public ICollection<Goal> Goals { get; set; } = new List<Goal>();
+        public ICollection<Card> Cards { get; set; } = new List<Card>();
+
     }
 }
