@@ -1,20 +1,16 @@
-﻿using SportsLeague.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using SportsLeague.DataAccess.Context;
+using SportsLeague.Domain.Entities;
+using SportsLeague.Domain.Interfaces.Repositories;
 
-namespace SportsLeague.Domain.Interfaces.Services;
+namespace SportsLeague.DataAccess.Repositories;
 
-public interface IMatchEventService
+public class MatchResultRepository : GenericRepository<MatchResult>, IMatchResultRepository
 {
-    // MatchResult
-    Task<MatchResult> RegisterResultAsync(int matchId, MatchResult result);
-    Task<MatchResult?> GetResultByMatchAsync(int matchId);
+    public MatchResultRepository(LeagueDbContext context) : base(context) { }
 
-    // Goals
-    Task<Goal> RegisterGoalAsync(int matchId, Goal goal);
-    Task<IEnumerable<Goal>> GetGoalsByMatchAsync(int matchId);
-    Task DeleteGoalAsync(int goalId);
-
-    // Cards
-    Task<Card> RegisterCardAsync(int matchId, Card card);
-    Task<IEnumerable<Card>> GetCardsByMatchAsync(int matchId);
-    Task DeleteCardAsync(int cardId);
+    public async Task<MatchResult?> GetByMatchIdAsync(int matchId)
+    {
+        return await _dbSet.Where(mr => mr.MatchId == matchId).FirstOrDefaultAsync();
+    }
 }

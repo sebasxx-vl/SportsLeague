@@ -282,6 +282,7 @@ namespace SportsLeague.DataAccess.Context
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
+
             // ── Card Configuration ──
             modelBuilder.Entity<Card>(entity =>
             {
