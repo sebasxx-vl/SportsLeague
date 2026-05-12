@@ -38,7 +38,7 @@ public static class DataSeeder
         };
 
         context.Teams.AddRange(teams);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(); // Guardar cambios
 
         // ═══ 2. JUGADORES (4 por equipo = 80 total) ═══
         var playersData = new (string First, string Last, PlayerPosition Pos, int Number)[][]
